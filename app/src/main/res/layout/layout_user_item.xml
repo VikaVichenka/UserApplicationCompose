@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="?selectableItemBackground"
+    android:layout_height="wrap_content">
+
+    <com.vikayarska.kotlinapplicationcompose.presentation.ui.customview.CircleImageView
+        android:id="@+id/iv_user_item"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:clickable="false"
+        app:layout_constraintDimensionRatio="h,1:1"
+        android:layout_marginStart="@dimen/regularPadding"
+        app:layout_constraintBottom_toBottomOf="@id/tv_info_user_item"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_name_user_item" />
+
+    <TextView
+        android:id="@+id/tv_name_user_item"
+        style="@style/SubTitleTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/regularPadding"
+        android:layout_marginEnd="@dimen/regularPadding"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_user_item"
+        android:layout_marginTop="@dimen/regularPadding"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="First Last Name" />
+
+    <TextView
+        android:id="@+id/tv_info_user_item"
+        style="@style/RegularTextStyle"
+        android:layout_width="0dp"
+        android:clickable="false"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/verticalPadding"
+        android:layout_marginEnd="@dimen/regularPadding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_name_user_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_name_user_item"
+        tools:text="First Last" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:clickable="false"
+        android:background="@color/blue_500"
+        app:layout_constraintTop_toBottomOf="@id/tv_info_user_item"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/regularPadding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
