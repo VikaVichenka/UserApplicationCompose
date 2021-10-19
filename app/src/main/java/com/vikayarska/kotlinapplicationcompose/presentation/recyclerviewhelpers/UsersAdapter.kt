@@ -11,7 +11,7 @@ import com.vikayarska.kotlinapplicationcompose.presentation.recyclerviewhelpers.
 class UsersAdapter(private val onClick: (AppUser) -> Unit) :
     PagingDataAdapter<AppUser, UserViewHolder>(diffCallback) {
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.bindTo(getItem(position))
+        getItem(position)?.let { user -> holder.bindTo(user) }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {

@@ -24,13 +24,13 @@ class UserViewHolder(itemView: View, val onClick: (AppUser) -> Unit) :
         }
     }
 
-    fun bindTo(item: AppUser?) {
+    fun bindTo(item: AppUser) {
         user = item
-        name.text = "${item?.firstName} ${item?.lastName}"
-        intro.text = item?.intro
+        name.text = item.fullName()
+        intro.text = item.intro
 
         Glide.with(itemView.context)
-            .load(item?.imageUrl)
+            .load(item.imageUrl)
             .circleCrop()
             .placeholder(R.drawable.ic_outline_image_24)
             .into(image);

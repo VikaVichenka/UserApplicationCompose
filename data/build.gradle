@@ -10,9 +10,7 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
-        
+
         buildConfigField("String", "API_KEY_RANDOM_TEXT", '"d2cfac9116474c87ba7e536c5b52c20d"')
         buildConfigField("String", "API_KEY_CAT_IMAGES", '"bc2ba65f-098b-4452-8616-bb7ae9bca0de"')
         buildConfigField("String", "LINK_CAT_IMAGES", '"https://api.thecatapi.com/"')

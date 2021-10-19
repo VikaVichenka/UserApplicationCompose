@@ -10,11 +10,9 @@
         <entry key="../../../../layout/compose-model-1630396914708.xml" value="0.6296296296296297" />
         <entry key="../../../../layout/compose-model-1630837605674.xml" value="0.1" />
         <entry key="../../../../layout/compose-model-1631093820844.xml" value="0.32432432432432434" />
-        <entry key="../../../../layout/compose-model-1634391512477.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1634650758776.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_add_24.xml" value="0.38958333333333334" />
         <entry key="app/src/main/res/drawable/ic_circle_background.xml" value="0.38958333333333334" />
-        <entry key="app/src/main/res/drawable/ic_outline_image_24.xml" value="0.115625" />
-        <entry key="app/src/main/res/drawable/shape_circle.xml" value="0.3484375" />
         <entry key="app/src/main/res/font/advent_pro.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/font/advent_pro_bold.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/font/advent_pro_medium.xml" value="0.4036458333333333" />
@@ -23,7 +21,6 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2516255553503013" />
         <entry key="app/src/main/res/layout/fragment_user_profile.xml" value="0.3880208333333333" />
         <entry key="app/src/main/res/layout/fragment_users_list.xml" value="0.3734375" />
-        <entry key="app/src/main/res/layout/layout_loading_view.xml" value="0.3880208333333333" />
         <entry key="app/src/main/res/layout/layout_user_item.xml" value="0.3734375" />
       </map>
     </option>

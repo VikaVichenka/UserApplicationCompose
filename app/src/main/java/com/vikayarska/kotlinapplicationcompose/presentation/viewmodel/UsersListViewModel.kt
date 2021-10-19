@@ -5,18 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.vikayarska.data.db.user.dao.UserDao
-import com.vikayarska.data.mapper.mapDBUser
 import com.vikayarska.data.mapper.mapDBUserToAppUser
 import com.vikayarska.data.model.AppUser
 import com.vikayarska.domain.model.BaseResult
 import com.vikayarska.domain.model.ResultEnum
-import com.vikayarska.domain.repository.UserRepository
-import com.vikayarska.domain.usecase.user.AddUsersUseCase
 import com.vikayarska.domain.usecase.user.UserUseCaseFacade
 import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewState
+import com.vikayarska.kotlinapplicationcompose.presentation.recyclerviewhelpers.UsersAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,31 +26,31 @@ class UsersListViewModel @Inject constructor(
     private val userDao: UserDao,
 ) : ViewModel() {
 
-//    private lateinit var _usersFlow: Flow<PagingData<AppUser>>
-//    val usersFlow: Flow<PagingData<AppUser>>
-//        get() = _usersFlow
-//
-//    init {
-//        getUsers()
-//    }
+    private var _usersFlow: Flow<PagingData<AppUser>>
+    val usersFlow: Flow<PagingData<AppUser>>
+        get() = _usersFlow
+
+    init {
+        _usersFlow = getUsers()
+    }
 
     val viewState = MutableLiveData<ViewState>()
 
-    fun addUsers() {
+    private fun addUsers() {
         viewState.value = ViewState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userUseCase.addUser().let { result ->
-                when (result) {
-                    is BaseResult.Success -> viewState.value =
+                viewState.value = when (result) {
+                    is BaseResult.Success ->
                         ViewState.Loaded(ResultEnum.Success)
-                    is BaseResult.Error -> viewState.value = ViewState.Failure(result.message)
+                    is BaseResult.Error -> ViewState.Failure(result.message)
                 }
             }
         }
     }
 
     //TODO: move to useCase and move mapping to proper class
-    fun getUsers(): Flow<PagingData<AppUser>> {
+    private fun getUsers(): Flow<PagingData<AppUser>> {
         val myPagingConfig = PagingConfig(
             initialLoadSize = 60,
             pageSize = 30,
@@ -70,5 +69,22 @@ class UsersListViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             userUseCase.deleteUser()
         }
+    }
+
+    fun setUpPagingAdapter(onClick: (AppUser) -> Unit): UsersAdapter {
+        val pagingAdapter = UsersAdapter(onClick)
+        pagingAdapter.addLoadStateListener { loadState ->
+            if (loadState.append.endOfPaginationReached) {
+                addUsers()
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            usersFlow.collectLatest { pagingData ->
+                pagingAdapter.submitData(pagingData)
+            }
+        }
+
+        return pagingAdapter
     }
 }

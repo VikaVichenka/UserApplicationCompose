@@ -11,45 +11,45 @@ import javax.inject.Inject
 
 fun mapDBUser(user: DbUser): User {
     return User(
-        user.id,
-        user.firstName,
-        user.lastName,
-        user.birth,
-        user.intro,
-        User.UserImage(user.imageId, user.imageUrl)
+        id = user.id,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        birth = user.birth,
+        intro = user.intro,
+        image = User.UserImage(user.imageId, user.imageUrl)
     )
 }
 
 fun mapDBUserToAppUser(user: DbUser): AppUser {
     return AppUser(
-        user.id,
-        user.firstName,
-        user.lastName,
-        user.intro,
-        user.imageUrl
+        id = user.id,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        intro = user.intro,
+        imageUrl = user.imageUrl
     )
 }
 
 fun mapUserToDBUser(user: User): DbUser {
     return DbUser(
-        user.id,
-        user.firstName,
-        user.lastName,
-        user.birth,
-        user.intro,
-        user.image.imageId,
-        user.image.imageUrl
+        id = user.id,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        birth = user.birth,
+        intro = user.intro,
+        imageId = user.image.imageId,
+        imageUrl = user.image.imageUrl
     )
 }
 
 
 fun mapDBUserToApplicationUser(user: DbUser): AppUser {
     return AppUser(
-        user.id,
-        user.firstName,
-        user.lastName,
-        user.intro,
-        user.imageUrl
+        id = user.id,
+        firstName = user.firstName,
+        lastName = user.lastName,
+        intro = user.intro,
+        imageUrl = user.imageUrl
     )
 }
 

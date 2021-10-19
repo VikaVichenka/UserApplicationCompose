@@ -14,13 +14,11 @@ class AddUserUseCaseImpl @Inject constructor(
 ) : AddUsersUseCase {
 
     override suspend fun invoke(): BaseResult<ResultEnum> {
-        return coroutineScope {
-            when (val userNames = userRepository.getUserNames()) {
-                is BaseResult.Success -> {
-                    userRepository.addUsers(userNames.data)
-                }
-                is BaseResult.Error -> BaseResult.Error(userNames.message)
+        return when (val userNames = userRepository.getUserNames()) {
+            is BaseResult.Success -> {
+                userRepository.addUsers(userNames.data)
             }
+            is BaseResult.Error -> BaseResult.Error(userNames.message)
         }
     }
 }
