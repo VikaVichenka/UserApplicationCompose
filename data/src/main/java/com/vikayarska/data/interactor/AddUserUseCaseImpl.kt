@@ -1,10 +1,9 @@
 package com.vikayarska.data.interactor
 
 import com.vikayarska.domain.model.BaseResult
-import com.vikayarska.domain.model.ResultEnum
+import com.vikayarska.domain.model.UpdateResult
 import com.vikayarska.domain.repository.UserRepository
 import com.vikayarska.domain.usecase.user.AddUsersUseCase
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,12 +12,18 @@ class AddUserUseCaseImpl @Inject constructor(
     private val userRepository: UserRepository,
 ) : AddUsersUseCase {
 
-    override suspend fun invoke(): BaseResult<ResultEnum> {
-        return when (val userNames = userRepository.getUserNames()) {
-            is BaseResult.Success -> {
-                userRepository.addUsers(userNames.data)
+    override suspend fun invoke() = runCatching { userRepository.getUserNames() }.fold(
+        onSuccess = { result ->
+            when (result) {
+                is BaseResult.Success -> {
+                    userRepository.addUsers(result.data)
+                    UpdateResult.Success
+                }
+                is BaseResult.Error -> UpdateResult.Error(result.message, result.exception)
+                is BaseResult.Empty -> UpdateResult.Empty
             }
-            is BaseResult.Error -> BaseResult.Error(userNames.message)
-        }
-    }
+        },
+        onFailure = {
+            UpdateResult.Error(it.localizedMessage, it as? Exception)
+        })
 }

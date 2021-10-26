@@ -13,6 +13,7 @@ class ImageRepositoryImpl @Inject constructor(private val api: com.vikayarska.da
     override suspend fun getImage(): BaseResult<Image> {
         return when (val response = api.getImage().getResponse()) {
             is BaseResult.Success -> BaseResult.Success(response.data.first())
+            is BaseResult.Empty -> BaseResult.Empty()
             is BaseResult.Error -> BaseResult.Error(response.message, response.exception)
         }
     }

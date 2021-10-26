@@ -3,6 +3,7 @@
 
     <!--Generic-->
     <string name="error">Error</string>
+    <string name="unknown_error_message">Ops! Something went wrong</string>
     <string name="ok">Ok</string>
 
     <!--UsersList-->

@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vikayarska.kotlinapplicationcompose.R
 import com.vikayarska.kotlinapplicationcompose.databinding.FragmentUsersListBinding
 import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewState
+import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewStateUpdate
+import com.vikayarska.kotlinapplicationcompose.presentation.recyclerviewhelpers.UsersAdapter
 import com.vikayarska.kotlinapplicationcompose.presentation.viewmodel.UsersListViewModel
+import com.vikayarska.kotlinapplicationcompose.presentation.viewmodel.collectWhenResumed
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO: is needed to crate base fragment with loading and show error?
 @AndroidEntryPoint
 class UsersListFragment : Fragment() {
 
@@ -38,6 +41,22 @@ class UsersListFragment : Fragment() {
     private fun setUpView() {
         setUpViewState()
         binding.btDeleteUsersList.setOnClickListener { viewModel.deleteUsers() }
+        val userAdapter = UsersAdapter(
+            onClick = {
+                findNavController().navigate(
+                    R.id.userProfileFragment,
+                    bundleOf("user" to it)
+                )
+            }).apply {
+            addLoadStateListener { loadState ->
+                if (loadState.append.endOfPaginationReached) {
+                    viewModel.addUsers()
+                }
+            }
+            viewModel.usersFlow.collectWhenResumed(lifecycleScope) { pagingData ->
+                this.submitData(pagingData)
+            }
+        }
         binding.rvUsersList.apply {
             addItemDecoration(
                 DividerItemDecoration(
@@ -45,27 +64,16 @@ class UsersListFragment : Fragment() {
                     (layoutManager as LinearLayoutManager).orientation
                 )
             )
-            adapter = viewModel.setUpPagingAdapter {
-                findNavController().navigate(
-                    R.id.userProfileFragment,
-                    bundleOf("user" to it)
-                )
-            }
+            adapter = userAdapter
         }
     }
 
     private fun setUpViewState() {
-        viewModel.viewState.observe(viewLifecycleOwner, { state ->
-            when (state) {
-                is ViewState.Loaded<*> -> {
-                    showLoading(View.GONE)
-                }
-                is ViewState.Failure -> {
-                    showError(state.errorMessage)
-                }
-                ViewState.Loading -> {
-                    showLoading(View.VISIBLE)
-                }
+        viewModel.viewState.observe(viewLifecycleOwner, {state ->
+            when(state){
+                is ViewStateUpdate.Completed -> showLoading(Visibility.Hide)
+                is ViewStateUpdate.Failure -> showError(state.errorMessage)
+                is ViewStateUpdate.Loading -> showLoading(Visibility.Show)
             }
         })
     }
@@ -73,10 +81,5 @@ class UsersListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    //TODO: make reusable for other fragments
-    private fun showLoading(visibility: Int) {
-        binding.progressCircularUserList.visibility = visibility
     }
 }
