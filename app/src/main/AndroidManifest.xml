@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinApplicationCompose">
         <activity
-            android:name=".presentation.activities.MainActivity"
+            android:name=".presentation.activities.UserActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

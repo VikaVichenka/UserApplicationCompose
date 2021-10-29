@@ -37,7 +37,7 @@ class UserRepositoryImpl @Inject constructor(
                 val intro = getIntro()
                 val image = when (val imageBase = imageRepository.getImage()) {
                     is BaseResult.Success -> imageBase.data
-                    else -> null
+                    is BaseResult.Empty, is BaseResult.Error -> null
                 }
                 userMappersFacade.mapNetworkToDbUser(NetworkUser(fullName, intro, image))
             }

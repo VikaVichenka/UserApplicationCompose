@@ -12,13 +12,17 @@ import com.vikayarska.kotlinapplicationcompose.presentation.viewmodel.MainActivi
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class UserActivity : AppCompatActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    companion object {
+        const val USER = "user"
     }
 }
 

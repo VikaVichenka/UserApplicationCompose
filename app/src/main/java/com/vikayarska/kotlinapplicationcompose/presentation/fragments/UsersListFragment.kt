@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.vikayarska.kotlinapplicationcompose.R
 import com.vikayarska.kotlinapplicationcompose.databinding.FragmentUsersListBinding
+import com.vikayarska.kotlinapplicationcompose.presentation.activities.UserActivity.Companion.USER
 import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewState
 import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewStateUpdate
 import com.vikayarska.kotlinapplicationcompose.presentation.recyclerviewhelpers.UsersAdapter
@@ -42,10 +43,10 @@ class UsersListFragment : Fragment() {
         setUpViewState()
         binding.btDeleteUsersList.setOnClickListener { viewModel.deleteUsers() }
         val userAdapter = UsersAdapter(
-            onClick = {
+            onClick = { user ->
                 findNavController().navigate(
                     R.id.userProfileFragment,
-                    bundleOf("user" to it)
+                    bundleOf(USER to user)
                 )
             }).apply {
             addLoadStateListener { loadState ->
@@ -69,8 +70,8 @@ class UsersListFragment : Fragment() {
     }
 
     private fun setUpViewState() {
-        viewModel.viewState.observe(viewLifecycleOwner, {state ->
-            when(state){
+        viewModel.viewState.observe(viewLifecycleOwner, { state ->
+            when (state) {
                 is ViewStateUpdate.Completed -> showLoading(Visibility.Hide)
                 is ViewStateUpdate.Failure -> showError(state.errorMessage)
                 is ViewStateUpdate.Loading -> showLoading(Visibility.Show)

@@ -16,8 +16,10 @@ class AddUserUseCaseImpl @Inject constructor(
         onSuccess = { result ->
             when (result) {
                 is BaseResult.Success -> {
-                    userRepository.addUsers(result.data)
-                    UpdateResult.Success
+                    runCatching { userRepository.addUsers(result.data) }.fold(
+                        onSuccess = { UpdateResult.Success },
+                        onFailure = { UpdateResult.Error(it.localizedMessage, it as? Exception) }
+                    )
                 }
                 is BaseResult.Error -> UpdateResult.Error(result.message, result.exception)
                 is BaseResult.Empty -> UpdateResult.Empty

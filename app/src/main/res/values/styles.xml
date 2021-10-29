@@ -30,8 +30,7 @@
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="ShapeAppearance.App.CircleImageView" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
+    <style name="ProgressBarStyle" parent="Widget.AppCompat.ProgressBar">
+        <item name="theme">@style/Theme.KotlinApplicationCompose</item>
     </style>
 </resources>

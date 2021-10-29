@@ -3,12 +3,10 @@ package com.vikayarska.kotlinapplicationcompose.presentation.fragments
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.vikayarska.kotlinapplicationcompose.R
 
 fun Fragment.showError(message: String?) {
@@ -26,12 +24,22 @@ fun Fragment.showError(message: String?) {
 
 fun Fragment.showLoading(visibility: Visibility) {
     val container = this.view as ViewGroup
-    var progress: View? = container.findViewById<ConstraintLayout>(R.id.container_progress_bar)
+    var progress: ProgressBar? = container.findViewById(R.id.id_progress_bar)
     if (progress == null) {
-        progress = layoutInflater.inflate(R.layout.progress_bar, null)
+        progress = ProgressBar(this.requireContext()).apply {
+            id = R.id.id_progress_bar
+            indeterminateDrawable.setTint(
+                ContextCompat.getColor(
+                    this@showLoading.requireContext(),
+                    R.color.blue_700
+                )
+            )
+            scaleY = 0.2f
+            scaleX = 0.2f
+        }
         container.addView(progress, ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT))
     }
-    progress?.visibility = visibility.value
+    progress.visibility = visibility.value
 }
 
 enum class Visibility(val value: Int) {

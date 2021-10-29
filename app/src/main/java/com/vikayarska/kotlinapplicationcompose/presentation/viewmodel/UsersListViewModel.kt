@@ -1,5 +1,6 @@
 package com.vikayarska.kotlinapplicationcompose.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,11 +35,14 @@ class UsersListViewModel @Inject constructor(
     }.flow.map { pagingData ->
         pagingData.map { user -> mapDBUserToAppUser(user) }
     }.cachedIn(viewModelScope)
-    val viewState = MutableLiveData<ViewStateUpdate>()
+
+    private val _viewState = MutableLiveData<ViewStateUpdate>()
+    val viewState: LiveData<ViewStateUpdate>
+        get() = _viewState
 
     fun addUsers() = launch {
-        viewState.value = ViewStateUpdate.Loading
-        viewState.value = when (val result = withContext(Dispatchers.IO) {
+        _viewState.value = ViewStateUpdate.Loading
+        _viewState.value = when (val result = withContext(Dispatchers.IO) {
             userUseCase.addUser()
         }) {
             is UpdateResult.Success, UpdateResult.Empty -> ViewStateUpdate.Completed
