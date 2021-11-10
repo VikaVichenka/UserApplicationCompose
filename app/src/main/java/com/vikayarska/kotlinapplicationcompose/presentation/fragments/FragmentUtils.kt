@@ -22,6 +22,13 @@ fun Fragment.showError(message: String?) {
 
 }
 
+/**
+ * Show/Hide progress bar
+ * @param visibility visibility which will be set to progress bar
+ *
+ * Firstly, progress bar is created programmatically and added to Fragment container
+ * Then, progress bar reference is accessing by id
+ */
 fun Fragment.showLoading(visibility: Visibility) {
     val container = this.view as ViewGroup
     var progress: ProgressBar? = container.findViewById(R.id.id_progress_bar)
