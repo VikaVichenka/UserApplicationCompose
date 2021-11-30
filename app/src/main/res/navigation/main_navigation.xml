@@ -20,6 +20,6 @@
         android:label="UserProfileFragment"
         tools:layout="@layout/fragment_user_profile">
         <argument android:name="user"
-            app:argType="com.vikayarska.kotlinapplicationcompose.domain.model.User"/>
+            app:argType="com.vikayarska.data.model.AppUser"/>
     </fragment>
 </navigation>
