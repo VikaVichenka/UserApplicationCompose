@@ -4,6 +4,7 @@
     <!--Generic-->
     <string name="error">Error</string>
     <string name="unknown_error_message">Ops! Something went wrong</string>
+    <string name="text_mock">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</string>
     <string name="ok">Ok</string>
 
     <!--UsersList-->
