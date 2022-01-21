@@ -36,7 +36,7 @@ class UsersListViewModel @Inject constructor(
         pagingData.map { user -> mapDBUserToAppUser(user) }
     }.cachedIn(viewModelScope)
 
-    private val _viewState = MutableLiveData<ViewStateUpdate>()
+    private val _viewState = MutableLiveData<ViewStateUpdate>(ViewStateUpdate.Completed)
     val viewState: LiveData<ViewStateUpdate>
         get() = _viewState
 

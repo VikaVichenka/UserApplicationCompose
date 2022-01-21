@@ -10,5 +10,9 @@
     <!--UsersList-->
     <string name="title_users_list">Users</string>
     <string name="add">Add</string>
+    <string name="delete">Delete</string>
+
+    <!--UserProfile-->
+    <string name="no_user_found">Opps! No user Found</string>
 
 </resources>

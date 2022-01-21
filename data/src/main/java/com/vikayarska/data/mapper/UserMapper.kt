@@ -43,13 +43,13 @@ fun mapUserToDBUser(user: User): DbUser {
 }
 
 
-fun mapDBUserToApplicationUser(user: DbUser): AppUser {
+fun mapUserToApplicationUser(user: User): AppUser {
     return AppUser(
         id = user.id,
         firstName = user.firstName,
         lastName = user.lastName,
         intro = user.intro,
-        imageUrl = user.imageUrl
+        imageUrl = user.image.imageUrl
     )
 }
 
@@ -73,6 +73,9 @@ private fun Calendar.generateRandomDate(): Date {
     return this.time
 }
 
+data class DbToUserMapper(val map: ((DbUser) -> User))
+
+data class UserToAppUserMapper(val map: ((User) -> AppUser))
 
 class UserMappersFacade constructor(
     val mapDbToUser: (DbUser) -> User,

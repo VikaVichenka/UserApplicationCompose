@@ -22,7 +22,7 @@ interface UserDao : BaseDao<DbUser> {
     fun getAllBase(): List<DbUser>
 
     @Query("SELECT * FROM users WHERE id LIKE :id")
-    suspend fun getUserById(id: Int): DbUser
+    suspend fun getUserById(id: Int): DbUser?
 
     @Query("SELECT * FROM users WHERE id IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): Flow<List<DbUser>>

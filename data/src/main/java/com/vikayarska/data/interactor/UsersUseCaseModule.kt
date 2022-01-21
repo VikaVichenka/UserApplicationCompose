@@ -2,6 +2,7 @@ package com.vikayarska.data.interactor
 
 import com.vikayarska.domain.usecase.user.AddUsersUseCase
 import com.vikayarska.domain.usecase.user.DeleteUserUseCase
+import com.vikayarska.domain.usecase.user.GetUserUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,5 +25,11 @@ abstract class UsersUseCaseModule {
     abstract fun bindDeleteUseCase(
         deleteUserUseCaseImpl: DeleteUserUseCaseImpl
     ): DeleteUserUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindGetUserUseCase(
+        getUserUseCase: GetUserUseCaseImpl
+    ): GetUserUseCase
 
 }

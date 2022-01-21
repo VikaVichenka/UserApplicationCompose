@@ -1,8 +1,13 @@
 package com.vikayarska.kotlinapplicationcompose.presentation.viewmodel
 
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Activity
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.vikayarska.kotlinapplicationcompose.presentation.activities.UserActivity
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -28,3 +33,20 @@ fun <T> Flow<T>.collectWhenResumed(
     viewScope: LifecycleCoroutineScope,
     action: suspend (value: T) -> Unit
 ) = viewScope.launchWhenResumed { collect { action(it) } }
+
+@Composable
+inline fun <reified VM : ViewModel> assistedViewModel(
+    viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    },
+    provideFactory: UserActivity.ViewModelFactoryProvider.() -> ViewModelProvider.Factory,
+): VM {
+    val factory = provideFactory(assistedViewModelFactory())
+    return viewModel(viewModelStoreOwner, factory = factory)
+}
+
+@Composable
+fun assistedViewModelFactory() = EntryPointAccessors.fromActivity(
+    LocalContext.current as Activity,
+    UserActivity.ViewModelFactoryProvider::class.java
+)

@@ -4,13 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +29,7 @@ import coil.transform.CircleCropTransformation
 import com.vikayarska.data.model.AppUser
 import com.vikayarska.kotlinapplicationcompose.R
 import com.vikayarska.kotlinapplicationcompose.presentation.Routes
-import com.vikayarska.kotlinapplicationcompose.presentation.USER
+import com.vikayarska.kotlinapplicationcompose.presentation.model.ViewStateUpdate
 import com.vikayarska.kotlinapplicationcompose.presentation.ui.RegularTextStyle
 import com.vikayarska.kotlinapplicationcompose.presentation.ui.TitleTextStyle
 import com.vikayarska.kotlinapplicationcompose.presentation.viewmodel.UsersListViewModel
@@ -38,26 +42,112 @@ fun UsersListScreen(
     navController: NavController,
     userListViewModel: UsersListViewModel = hiltViewModel()
 ) {
-    UsersList(flow = userListViewModel.usersFlow) { user ->
-        navController.currentBackStackEntry?.arguments?.putSerializable(USER, user)
-        navController.navigate(Routes.UserProfile.route)
+    val onUserClick: (AppUser) -> Unit = { user ->
+        navController.navigate(Routes.UserProfile.route(user.id))
+    }
+    val viewState = userListViewModel.viewState.observeAsState()
+    when (viewState.value) {
+        is ViewStateUpdate.Completed -> UsersList(
+            userListViewModel = userListViewModel,
+            flow = userListViewModel.usersFlow,
+            onClick = onUserClick, isLoading = false
+        )
+        is ViewStateUpdate.Loading -> UsersList(
+            userListViewModel = userListViewModel,
+            flow = userListViewModel.usersFlow,
+            onClick = onUserClick, isLoading = true
+        )
+        is ViewStateUpdate.Failure -> UserListError()
+    }
+}
+
+//TODO: fix loaded list do not scroll to top
+@Composable
+fun UsersList(
+    userListViewModel: UsersListViewModel,
+    flow: Flow<PagingData<AppUser>>,
+    onClick: (AppUser) -> Unit,
+    isLoading: Boolean
+) {
+    Scaffold(
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = { userListViewModel.deleteUsers() },
+                icon = {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "Delete"
+                    )
+                },
+                text = {
+                    Text(
+                        stringResource(id = R.string.delete),
+                        style = TitleTextStyle
+                    )
+                },
+                backgroundColor = colorResource(id = R.color.teal_700)
+            )
+        }
+    ) {
+        val lazyPagingItems = flow.collectAsLazyPagingItems()
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(lazyPagingItems) { user ->
+                user?.let {
+                    UserCard(it, onClick)
+                    Divider(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        color = Color.LightGray,
+                        thickness = 1.dp
+                    )
+                }
+            }
+            if (isLoading) {
+                item() {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(dimensionResource(id = R.dimen.regularPadding))
+                            .size(dimensionResource(id = R.dimen.loaderSize)),
+                        color = colorResource(id = R.color.blue_700)
+                    )
+                }
+            }
+        }
+
+        lazyPagingItems.apply {
+            if (loadState.append.endOfPaginationReached) {
+                userListViewModel.addUsers()
+            }
+        }
     }
 }
 
 @Composable
-fun UsersList(flow: Flow<PagingData<AppUser>>, onClick: (AppUser) -> Unit) {
-    val lazyPagingItems = flow.collectAsLazyPagingItems()
-    LazyColumn {
-        items(lazyPagingItems) { user ->
-            user?.let {
-                UserCard(it, onClick)
-                Divider(
-                    modifier = Modifier.fillParentMaxWidth(),
-                    color = Color.LightGray,
-                    thickness = 1.dp
-                )
-            }
-        }
+@Preview(showBackground = true)
+fun UserListError() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                dimensionResource(id = R.dimen.regularPadding)
+            )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_dinosaur_error),
+            contentDescription = "Error",
+            Modifier
+                .padding()
+                .size(dimensionResource(id = R.dimen.imageSmallSize))
+        )
+        Text(
+            stringResource(id = R.string.unknown_error_message),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(start = dimensionResource(id = R.dimen.regularPadding)),
+            style = TitleTextStyle
+        )
     }
 }
 
@@ -65,7 +155,7 @@ fun UsersList(flow: Flow<PagingData<AppUser>>, onClick: (AppUser) -> Unit) {
 @Composable
 fun UserCard(user: AppUser, onClick: (AppUser) -> Unit) {
     val padding = dimensionResource(id = R.dimen.regularPadding)
-    val imageSize = 80.dp
+    val imageSize = dimensionResource(id = R.dimen.imageSmallSize)
     Row(
         Modifier
             .clickable(onClick = { onClick(user) })
