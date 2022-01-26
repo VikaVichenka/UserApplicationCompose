@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -35,8 +36,6 @@ import com.vikayarska.kotlinapplicationcompose.presentation.ui.TitleTextStyle
 import com.vikayarska.kotlinapplicationcompose.presentation.viewmodel.UsersListViewModel
 import kotlinx.coroutines.flow.Flow
 
-//TODO: add loading and view model calls
-
 @Composable
 fun UsersListScreen(
     navController: NavController,
@@ -47,15 +46,9 @@ fun UsersListScreen(
     }
     val viewState = userListViewModel.viewState.observeAsState()
     when (viewState.value) {
-        is ViewStateUpdate.Completed -> UsersList(
+        is ViewStateUpdate.Completed, is ViewStateUpdate.Loading -> UsersList(
             userListViewModel = userListViewModel,
-            flow = userListViewModel.usersFlow,
-            onClick = onUserClick, isLoading = false
-        )
-        is ViewStateUpdate.Loading -> UsersList(
-            userListViewModel = userListViewModel,
-            flow = userListViewModel.usersFlow,
-            onClick = onUserClick, isLoading = true
+            onClick = onUserClick
         )
         is ViewStateUpdate.Failure -> UserListError()
     }
@@ -65,10 +58,10 @@ fun UsersListScreen(
 @Composable
 fun UsersList(
     userListViewModel: UsersListViewModel,
-    flow: Flow<PagingData<AppUser>>,
-    onClick: (AppUser) -> Unit,
-    isLoading: Boolean
+    onClick: (AppUser) -> Unit
 ) {
+    val viewState = userListViewModel.viewState.observeAsState()
+    val flow = userListViewModel.usersFlow
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -104,8 +97,9 @@ fun UsersList(
                     )
                 }
             }
-            if (isLoading) {
-                item() {
+
+            if (viewState.value == ViewStateUpdate.Loading) {
+                item {
                     CircularProgressIndicator(
                         modifier = Modifier
                             .padding(dimensionResource(id = R.dimen.regularPadding))

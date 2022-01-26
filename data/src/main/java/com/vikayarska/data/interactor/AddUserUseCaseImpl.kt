@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AddUserUseCaseImpl @Inject constructor(
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepository
 ) : AddUsersUseCase {
 
     override suspend fun invoke() = runCatching { userRepository.getUserNames() }.fold(

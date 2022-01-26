@@ -26,7 +26,7 @@ class UsersListViewModel @Inject constructor(
 
     var usersFlow: Flow<PagingData<AppUser>> = Pager(
         config = PagingConfig(
-            initialLoadSize = 30,
+            initialLoadSize = 15,
             pageSize = 15,
             maxSize = 200
         )
